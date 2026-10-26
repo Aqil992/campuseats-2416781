@@ -448,3 +448,88 @@ a.card:hover {
     padding: 1rem;
   }
 }
+
+/* Lab 3 improvements: consistent CampusEats button styling */
+
+/* Main buttons, including checkout and retry buttons */
+.btn {
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: #00554d;
+}
+
+.btn:focus-visible,
+button.card:focus-visible,
+.qty button:focus-visible,
+.link:focus-visible {
+  outline: 3px solid #e8a33d;
+  outline-offset: 3px;
+}
+
+/* Vendor cards */
+button.card {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+button.card:hover {
+  border-color: var(--green);
+  box-shadow: 0 2px 8px rgba(0, 104, 94, 0.12);
+}
+
+.vendor-card.selected {
+  border-color: var(--green);
+  background: var(--green-light);
+}
+
+/* Cart quantity buttons */
+.qty button:hover {
+  background: var(--green-light);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+/* Cart navigation link/button inside the header */
+.header .link {
+  color: #fff;
+}
+
+.header .link:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Form fields and category dropdown */
+.form input:focus,
+.form select:focus {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+  border-color: var(--green);
+}
+
+/* Vendor card finishing touches */
+.vendor-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.vendor-card.selected {
+  background: var(--green-light);
+  border-color: var(--green);
+}
+
+.vendor-selected-label {
+  display: inline-block;
+  margin: 0.5rem 0 0;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--green);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+}

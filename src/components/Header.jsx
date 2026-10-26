@@ -1,15 +1,29 @@
-function Header({ cartCount }) {
+function Header({ cartCount, currentView, onNavigate }) {
   return (
     <header className="header">
       <h1 className="logo">CampusEats</h1>
+
       <nav className="nav">
-        <a href="#">Vendors</a>
-        <a href="#">My Orders</a>
-        <a href="#" className="cart">
+        <button
+          type="button"
+          onClick={() => onNavigate("menu")}
+          className={`nav-button ${currentView === "menu" ? "active" : ""}`}
+        >
+          Vendors
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onNavigate("cart")}
+          className={`nav-button cart ${
+            currentView === "cart" ? "active" : ""
+          }`}
+        >
           Cart <span className="badge">{cartCount}</span>
-        </a>
+        </button>
       </nav>
     </header>
   );
 }
+
 export default Header;
