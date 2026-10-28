@@ -3,22 +3,41 @@ function CartItem({ cartItem, onUpdateQuantity, onRemove }) {
   const lineTotal = item.price * qty;
 
   return (
-    <div className="cart-item">
-      <div>
-        <h3>{item.name}</h3>
+    <div className="cart-line">
+      <div className="cart-name">
+        <strong>{item.name}</strong>
         <p>Price each: RM {item.price.toFixed(2)}</p>
-        <p>Subtotal: RM {lineTotal.toFixed(2)}</p>
       </div>
 
-      <div>
-        <button onClick={() => onUpdateQuantity(item.id, -1)}>-</button>
+      <div className="qty">
+        <button
+          type="button"
+          aria-label={`Decrease ${item.name} quantity`}
+          onClick={() => onUpdateQuantity(item.id, -1)}
+        >
+          −
+        </button>
 
-        <span> {qty} </span>
+        <span>{qty}</span>
 
-        <button onClick={() => onUpdateQuantity(item.id, 1)}>+</button>
-
-        <button onClick={() => onRemove(item.id)}>Remove</button>
+        <button
+          type="button"
+          aria-label={`Increase ${item.name} quantity`}
+          onClick={() => onUpdateQuantity(item.id, 1)}
+        >
+          +
+        </button>
       </div>
+
+      <strong className="line-total">RM {lineTotal.toFixed(2)}</strong>
+
+      <button
+        type="button"
+        className="remove-button"
+        onClick={() => onRemove(item.id)}
+      >
+        Remove
+      </button>
     </div>
   );
 }

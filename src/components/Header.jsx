@@ -1,26 +1,41 @@
-function Header({ cartCount, currentView, onNavigate }) {
+import { NavLink } from "react-router-dom";
+import { useCart } from "../hooks/useCart.js";
+
+function Header() {
+  const { count: cartCount } = useCart();
+
   return (
     <header className="header">
-      <h1 className="logo">CampusEats</h1>
+      <h1 className="logo">
+        <NavLink to="/" className="logo-link">
+          CampusEats
+        </NavLink>
+      </h1>
 
       <nav className="nav">
-        <button
-          type="button"
-          onClick={() => onNavigate("menu")}
-          className={`nav-button ${currentView === "menu" ? "active" : ""}`}
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) => `nav-button ${isActive ? "active" : ""}`}
         >
           Vendors
-        </button>
+        </NavLink>
 
-        <button
-          type="button"
-          onClick={() => onNavigate("cart")}
-          className={`nav-button cart ${
-            currentView === "cart" ? "active" : ""
-          }`}
+        <NavLink
+          to="/orders"
+          className={({ isActive }) => `nav-button ${isActive ? "active" : ""}`}
+        >
+          Orders
+        </NavLink>
+
+        <NavLink
+          to="/cart"
+          className={({ isActive }) =>
+            `nav-button cart ${isActive ? "active" : ""}`
+          }
         >
           Cart <span className="badge">{cartCount}</span>
-        </button>
+        </NavLink>
       </nav>
     </header>
   );

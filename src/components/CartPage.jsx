@@ -1,11 +1,9 @@
 import CartItem from "./CartItem.jsx";
 import CheckoutForm from "./CheckoutForm.jsx";
+import { useCart } from "../hooks/useCart.js";
 
-function CartPage({ cart, onUpdateQuantity, onRemove, onPlaceOrder }) {
-  const total = cart.reduce(
-    (sum, cartItem) => sum + cartItem.item.price * cartItem.qty,
-    0,
-  );
+function CartPage({ onPlaceOrder }) {
+  const { cart, total, changeQty, removeFromCart } = useCart();
 
   return (
     <section>
@@ -14,20 +12,26 @@ function CartPage({ cart, onUpdateQuantity, onRemove, onPlaceOrder }) {
       {cart.length === 0 ? (
         <p>Your cart is empty. Add some food from the menu!</p>
       ) : (
-        <>
-          {cart.map((cartItem) => (
-            <CartItem
-              key={cartItem.item.id}
-              cartItem={cartItem}
-              onUpdateQuantity={onUpdateQuantity}
-              onRemove={onRemove}
-            />
-          ))}
+        <div className="cart-layout">
+          <div className="cart-list">
+            {cart.map((cartItem) => (
+              <CartItem
+                key={cartItem.item.id}
+                cartItem={cartItem}
+                onUpdateQuantity={changeQty}
+                onRemove={removeFromCart}
+              />
+            ))}
 
-          <h3>Total: RM {total.toFixed(2)}</h3>
+            <div className="cart-total">
+              <strong>Total: RM {total.toFixed(2)}</strong>
+            </div>
+          </div>
 
-          <CheckoutForm onPlaceOrder={onPlaceOrder} />
-        </>
+          <div className="checkout-card">
+            <CheckoutForm onPlaceOrder={onPlaceOrder} />
+          </div>
+        </div>
       )}
     </section>
   );
