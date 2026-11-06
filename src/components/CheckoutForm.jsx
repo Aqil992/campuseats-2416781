@@ -1,92 +1,99 @@
 import { useState } from "react";
 
+const MAHALLAHS = [
+  "Ali",
+  "Aminah",
+  "Faruq",
+  "Asiah",
+  "Bilal",
+  "Hafsa",
+  "Uthman",
+  "Zubair",
+];
+
+function validate(values) {
+  const errors = {};
+  if (values.name.trim().length < 3) {
+    errors.name = "Enter your name (at least 3 characters).";
+  }
+  if (!values.mahallah) {
+    errors.mahallah = "Choose your mahallah.";
+  }
+  if (
+    !values.pickupTime ||
+    values.pickupTime < "07:00" ||
+    values.pickupTime > "22:00"
+  ) {
+    errors.pickupTime = "Choose a pickup time between 07:00 and 22:00.";
+  }
+  return errors;
+}
+
 function CheckoutForm({ onPlaceOrder }) {
-  const [name, setName] = useState("");
-  const [mahallah, setMahallah] = useState("");
-  const [pickupTime, setPickupTime] = useState("");
+  const [values, setValues] = useState({
+    name: "",
+    mahallah: "",
+    pickupTime: "",
+  });
   const [errors, setErrors] = useState({});
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+    setValues((prev) => ({ ...prev, [name]: value }));
+  }
 
   function handleSubmit(event) {
     event.preventDefault();
-
-    const newErrors = {};
-
-    if (name.trim().length < 3) {
-      newErrors.name = "Name must be at least 3 characters.";
-    }
-
-    if (!mahallah) {
-      newErrors.mahallah = "Please select your Mahallah.";
-    }
-
-    if (!pickupTime) {
-      newErrors.pickupTime = "Please select a pickup time.";
-    } else if (pickupTime < "07:00" || pickupTime > "22:00") {
-      newErrors.pickupTime = "Pickup time must be between 07:00 and 22:00.";
-    }
-
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length === 0) {
-      onPlaceOrder({
-        name: name.trim(),
-        mahallah,
-        pickupTime,
-      });
+    const foundErrors = validate(values);
+    setErrors(foundErrors);
+    if (Object.keys(foundErrors).length === 0) {
+      onPlaceOrder(values);
     }
   }
 
   return (
-    <section>
-      <h2 className="section-title">Checkout</h2>
+    <form className="card form" onSubmit={handleSubmit} noValidate>
+      <h3>Checkout</h3>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="customer-name">Full Name</label>
-          <input
-            id="customer-name"
-            type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Enter your name"
-          />
-          {errors.name && <p className="error">{errors.name}</p>}
-        </div>
+      <label htmlFor="name">Name</label>
+      <input
+        id="name"
+        name="name"
+        value={values.name}
+        onChange={handleChange}
+      />
+      {errors.name && <p className="field-error">{errors.name}</p>}
 
-        <div>
-          <label htmlFor="mahallah">Mahallah</label>
-          <select
-            id="mahallah"
-            value={mahallah}
-            onChange={(event) => setMahallah(event.target.value)}
-          >
-            <option value="">Select your Mahallah</option>
-            <option value="Ali">Ali</option>
-            <option value="Aminah">Aminah</option>
-            <option value="Faruq">Faruq</option>
-            <option value="Asiah">Asiah</option>
-            <option value="Bilal">Bilal</option>
-            <option value="Hafsa">Hafsa</option>
-            <option value="Uthman">Uthman</option>
-            <option value="Zubair">Zubair</option>
-          </select>
-          {errors.mahallah && <p className="error">{errors.mahallah}</p>}
-        </div>
+      <label htmlFor="mahallah">Mahallah</label>
+      <select
+        id="mahallah"
+        name="mahallah"
+        value={values.mahallah}
+        onChange={handleChange}
+      >
+        <option value="">Select...</option>
+        {MAHALLAHS.map((m) => (
+          <option key={m} value={m}>
+            {m}
+          </option>
+        ))}
+      </select>
+      {errors.mahallah && <p className="field-error">{errors.mahallah}</p>}
 
-        <div>
-          <label htmlFor="pickup-time">Pickup Time</label>
-          <input
-            id="pickup-time"
-            type="time"
-            value={pickupTime}
-            onChange={(event) => setPickupTime(event.target.value)}
-          />
-          {errors.pickupTime && <p className="error">{errors.pickupTime}</p>}
-        </div>
+      <label htmlFor="pickupTime">Pickup time</label>
+      <input
+        type="time"
+        id="pickupTime"
+        name="pickupTime"
+        value={values.pickupTime}
+        onChange={handleChange}
+      />
+      {errors.pickupTime && <p className="field-error">{errors.pickupTime}</p>}
 
-        <button type="submit">Place Order</button>
-      </form>
-    </section>
+      <button type="submit" className="btn">
+        Place order
+      </button>
+    </form>
   );
 }
 

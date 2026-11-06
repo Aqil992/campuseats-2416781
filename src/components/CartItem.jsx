@@ -1,44 +1,29 @@
-function CartItem({ cartItem, onUpdateQuantity, onRemove }) {
-  const { item, qty } = cartItem;
-  const lineTotal = item.price * qty;
-
+function CartItem({ line, onChangeQty, onRemove }) {
+  const { item, qty } = line;
   return (
-    <div className="cart-line">
-      <div className="cart-name">
-        <strong>{item.name}</strong>
-        <p>Price each: RM {item.price.toFixed(2)}</p>
+    <li className="cart-line">
+      <div>
+        <p className="cart-name">{item.name}</p>
+        <p className="muted">RM {item.price.toFixed(2)} each</p>
       </div>
-
       <div className="qty">
-        <button
-          type="button"
-          aria-label={`Decrease ${item.name} quantity`}
-          onClick={() => onUpdateQuantity(item.id, -1)}
-        >
-          −
+        <button type="button" onClick={() => onChangeQty(item.id, -1)}>
+          -
         </button>
-
         <span>{qty}</span>
-
-        <button
-          type="button"
-          aria-label={`Increase ${item.name} quantity`}
-          onClick={() => onUpdateQuantity(item.id, 1)}
-        >
+        <button type="button" onClick={() => onChangeQty(item.id, 1)}>
           +
         </button>
       </div>
-
-      <strong className="line-total">RM {lineTotal.toFixed(2)}</strong>
-
+      <p className="line-total">RM {(item.price * qty).toFixed(2)}</p>
       <button
         type="button"
-        className="remove-button"
+        className="link danger"
         onClick={() => onRemove(item.id)}
       >
         Remove
       </button>
-    </div>
+    </li>
   );
 }
 

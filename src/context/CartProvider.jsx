@@ -6,67 +6,54 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useLocalStorage("campuseats-cart", []);
   const [orders, setOrders] = useLocalStorage("campuseats-orders", []);
 
-  // Calculate total quantity of items in the cart
-  const count = cart.reduce((total, cartItem) => total + cartItem.qty, 0);
-
-  // Calculate the total price of items in the cart
-  const total = cart.reduce(
-    (sum, cartItem) => sum + cartItem.item.price * cartItem.qty,
-    0,
-  );
-
-  // Add an item to the cart, or increase its quantity
   function addToCart(item) {
     setCart((prevCart) => {
-      const existingItem = prevCart.find(
-        (cartItem) => cartItem.item.id === item.id,
-      );
-
-      if (existingItem) {
-        return prevCart.map((cartItem) =>
-          cartItem.item.id === item.id
-            ? { ...cartItem, qty: cartItem.qty + 1 }
-            : cartItem,
+      const existingLine = prevCart.find((line) => line.item.id === item.id);
+      if (existingLine) {
+        return prevCart.map((line) =>
+          line.item.id === item.id ? { ...line, qty: line.qty + 1 } : line,
         );
       }
-
       return [...prevCart, { item, qty: 1 }];
     });
   }
 
-  // Increase or decrease item quantity
-  function changeQty(itemId, change) {
+  function changeQty(itemId, delta) {
     setCart((prevCart) =>
       prevCart
-        .map((cartItem) =>
-          cartItem.item.id === itemId
-            ? { ...cartItem, qty: cartItem.qty + change }
-            : cartItem,
-        )
-        .filter((cartItem) => cartItem.qty > 0),
+        .map((line) => {
+          if (line.item.id === itemId) {
+            const newQty = line.qty + delta;
+            return newQty > 0 ? { ...line, qty: newQty } : null;
+          }
+          return line;
+        })
+        .filter(Boolean),
     );
   }
 
-  // Remove an item from the cart
   function removeFromCart(itemId) {
-    setCart((prevCart) =>
-      prevCart.filter((cartItem) => cartItem.item.id !== itemId),
-    );
+    setCart((prevCart) => prevCart.filter((line) => line.item.id !== itemId));
   }
 
-  // Save an order and clear the cart
   function placeOrder(details) {
-    const order = {
-      ...details,
-      items: cart,
-      total,
+    const total = cart.reduce(
+      (sum, line) => sum + line.item.price * line.qty,
+      0,
+    );
+    const newOrder = {
       id: Date.now(),
-      date: new Date().toISOString(),
+      ...details,
+      items: [...cart],
+      total,
+      date: new Date().toLocaleString(),
     };
-
-    setOrders((prevOrders) => [...prevOrders, order]);
+    setOrders((prevOrders) => [newOrder, ...prevOrders]);
     setCart([]);
   }
+
+  const count = cart.reduce((sum, line) => sum + line.qty, 0);
+  const total = cart.reduce((sum, line) => sum + line.item.price * line.qty, 0);
 
   const value = {
     cart,

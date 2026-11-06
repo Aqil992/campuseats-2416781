@@ -1,30 +1,38 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 function VendorCard({ vendor }) {
   return (
-    <article className="card vendor-card">
+    <Link
+      to={`/vendor/${vendor.id}`}
+      className="card vendor-card"
+      style={{ textDecoration: "none", color: "inherit" }}
+    >
       <div className="thumb" aria-hidden="true">
         {vendor.name.charAt(0)}
       </div>
-
       <div>
-        <h2>{vendor.name}</h2>
-
+        <h3>{vendor.name}</h3>
         <p className="muted">{vendor.location}</p>
-
         <p className="muted">Open: {vendor.openHours}</p>
-
         <span className={vendor.isOpen ? "status open" : "status closed"}>
           {vendor.isOpen ? "Open now" : "Closed"}
         </span>
-
-        <p>
-          <Link to={`/vendor/${vendor.id}`} className="btn">
+        <div style={{ marginTop: "1rem" }}>
+          <span
+            className="btn"
+            style={{
+              display: "inline-block",
+              background: "#004d40",
+              color: "#fff",
+              padding: "0.5rem 1rem",
+              borderRadius: "4px",
+            }}
+          >
             View Menu
-          </Link>
-        </p>
+          </span>
+        </div>
       </div>
-    </article>
+    </Link>
   );
 }
 

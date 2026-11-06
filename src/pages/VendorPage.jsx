@@ -1,66 +1,71 @@
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router";
+import { useVendors } from "../hooks/useVendors.js";
+import { useCart } from "../hooks/useCart.js";
 import MenuList from "../components/MenuList.jsx";
+import { Loading, ErrorMessage } from "../components/Status.jsx";
 
-function VendorPage({ vendors }) {
+export function VendorPage() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+  const selectedCategory = searchParams.get("cat") || "All";
 
-  const vendor = vendors.find((vendor) => String(vendor.id) === id);
+  const { vendors, loading, error, reload } = useVendors();
+  const { addToCart } = useCart();
 
+  if (loading) return <Loading />;
+  if (error) return <ErrorMessage message={error} onRetry={reload} />;
+
+  const vendor = vendors.find((v) => v.id === id);
   if (!vendor) {
     return (
-      <section>
-        <h2 className="section-title">Vendor not found</h2>
-        <p>The vendor you are looking for does not exist.</p>
-      </section>
+      <div className="card">
+        <h2>Vendor not found</h2>
+      </div>
     );
   }
 
-  const categories = [...new Set(vendor.menu.map((item) => item.category))];
+  const categories = [
+    "All",
+    ...new Set(vendor.menu.map((item) => item.category)),
+  ];
+  const filteredMenu =
+    selectedCategory === "All"
+      ? vendor.menu
+      : vendor.menu.filter((item) => item.category === selectedCategory);
 
-  const requestedCategory = searchParams.get("cat");
-
-  const categoryFilter = categories.includes(requestedCategory)
-    ? requestedCategory
-    : "All";
-
-  const filteredMenuItems = vendor.menu.filter(
-    (item) => categoryFilter === "All" || item.category === categoryFilter,
-  );
-
-  function handleCategoryChange(category) {
-    if (category === "All") {
-      setSearchParams({});
+  function handleCategoryChange(cat) {
+    if (cat === "All") {
+      searchParams.delete("cat");
     } else {
-      setSearchParams({ cat: category });
+      searchParams.set("cat", cat);
     }
+    setSearchParams(searchParams);
   }
 
   return (
     <section>
       <h2 className="section-title">Menu: {vendor.name}</h2>
-
-      <div className="category-filter">
-        <label htmlFor="category-filter">Filter by category:</label>
-
-        <select
-          id="category-filter"
-          value={categoryFilter}
-          onChange={(event) => handleCategoryChange(event.target.value)}
-        >
-          <option value="All">All Categories</option>
-
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
+      <div
+        className="category-filters"
+        style={{
+          display: "flex",
+          gap: "0.5rem",
+          marginBottom: "1rem",
+          flexWrap: "wrap",
+        }}
+      >
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            type="button"
+            className={`btn ${selectedCategory === cat ? "active" : ""}`}
+            onClick={() => handleCategoryChange(cat)}
+          >
+            {cat}
+          </button>
+        ))}
       </div>
-
-      <MenuList items={filteredMenuItems} />
+      <MenuList items={filteredMenu} onAdd={addToCart} />
     </section>
   );
 }
-
-export default VendorPage;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export function useVendors() {
   const [vendors, setVendors] = useState([]);
@@ -6,50 +6,33 @@ export function useVendors() {
   const [error, setError] = useState(null);
   const [reloadKey, setReloadKey] = useState(0);
 
+  const reload = useCallback(() => {
+    setReloadKey((prev) => prev + 1);
+  }, []);
+
   useEffect(() => {
     const controller = new AbortController();
+    setLoading(true);
+    setError(null);
 
-    async function fetchVendors() {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetch("/api/vendors.json", {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!Array.isArray(data)) {
-          throw new Error("Vendor data must be an array.");
-        }
-
+    fetch("/api/vendors.json", { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
         setVendors(data);
-      } catch (err) {
+        setLoading(false);
+      })
+      .catch((err) => {
         if (err.name !== "AbortError") {
-          setError(err.message || "Failed to load vendors.");
-        }
-      } finally {
-        if (!controller.signal.aborted) {
+          setError(err.message);
           setLoading(false);
         }
-      }
-    }
+      });
 
-    fetchVendors();
-
-    return () => {
-      controller.abort();
-    };
+    return () => controller.abort();
   }, [reloadKey]);
-
-  function reload() {
-    setReloadKey((key) => key + 1);
-  }
 
   return { vendors, loading, error, reload };
 }

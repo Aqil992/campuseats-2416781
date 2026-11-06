@@ -1,12 +1,18 @@
 export function Loading() {
-  return <p>Loading vendors...</p>;
+  return (
+    <p className="muted" role="status">
+      Loading menus...
+    </p>
+  );
 }
 
 export function ErrorMessage({ message, onRetry }) {
   return (
-    <div>
-      <p>Error loading vendors: {message}</p>
-      <button onClick={onRetry}>Try Again</button>
+    <div className="card error" role="alert">
+      <p>Could not load menus: {message}</p>
+      <button className="btn" onClick={onRetry}>
+        Try again
+      </button>
     </div>
   );
 }

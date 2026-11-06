@@ -1,15 +1,8 @@
-import { Link } from "react-router-dom";
-
-function NotFoundPage() {
+export function NotFoundPage() {
   return (
-    <section>
-      <h2 className="section-title">404 - Page Not Found</h2>
-
-      <p>Sorry, the page you are looking for does not exist.</p>
-
-      <Link to="/">Back to Home</Link>
-    </section>
+    <div className="card">
+      <h2>404</h2>
+      <p>No page here.</p>
+    </div>
   );
 }
-
-export default NotFoundPage;

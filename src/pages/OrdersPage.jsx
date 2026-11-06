@@ -1,39 +1,46 @@
 import { useCart } from "../hooks/useCart.js";
 
-function OrdersPage() {
+export function OrdersPage() {
   const { orders } = useCart();
 
+  if (orders.length === 0) {
+    return (
+      <div className="card">
+        <h2>No orders yet</h2>
+        <p className="muted">Your past orders will appear here.</p>
+      </div>
+    );
+  }
+
   return (
-    <section>
-      <h2 className="section-title">My Orders</h2>
-
-      {orders.length === 0 ? (
-        <p>You have no orders yet.</p>
-      ) : (
-        <div className="orders-list">
-          {orders.map((order) => (
-            <article className="checkout-card" key={order.id}>
-              <h3>Order #{order.id}</h3>
-
-              <p>Name: {order.name}</p>
-              <p>Mahallah: {order.mahallah}</p>
-              <p>Pickup Time: {order.pickupTime}</p>
-              <p>Total: RM {order.total.toFixed(2)}</p>
-
-              <h4>Items</h4>
-              <ul>
-                {order.items.map((cartItem) => (
-                  <li key={cartItem.item.id}>
-                    {cartItem.item.name} × {cartItem.qty}
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))}
+    <div>
+      <h2>My Orders</h2>
+      {orders.map((order) => (
+        <div key={order.id} className="card" style={{ marginBottom: "1rem" }}>
+          <p>
+            <strong>Date:</strong> {order.date}
+          </p>
+          <p>
+            <strong>Name:</strong> {order.name}
+          </p>
+          <p>
+            <strong>Mahallah:</strong> {order.mahallah}
+          </p>
+          <p>
+            <strong>Pickup time:</strong> {order.pickupTime}
+          </p>
+          <p>
+            <strong>Total paid:</strong> RM {order.total.toFixed(2)}
+          </p>
+          <ul>
+            {order.items.map((line) => (
+              <li key={line.item.id}>
+                {line.item.name} (x{line.qty})
+              </li>
+            ))}
+          </ul>
         </div>
-      )}
-    </section>
+      ))}
+    </div>
   );
 }
-
-export default OrdersPage;
